@@ -1,4 +1,4 @@
-# D3D11-SwapChain-Hook
+# D3D11-SwapChain-Wrapper
 
 Easy to use D3D11 SwapChain Dummy Method Wrapper
 
