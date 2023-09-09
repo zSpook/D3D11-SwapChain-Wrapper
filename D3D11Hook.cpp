@@ -1,6 +1,22 @@
 #include "D3D11Hook.h"
 
-#include "../../Utils/Utils.h"
+static BOOL CALLBACK EnumWindowsCallback(HWND Handle, LPARAM lParam) 
+{
+    if (GetWindow(Handle, GW_OWNER) != nullptr && !IsWindowVisible(Handle) && Handle == GetConsoleWindow())
+    {
+        return TRUE;
+    }
+
+    *reinterpret_cast<HWND*>(lParam) = Handle;
+    return FALSE;
+}
+
+HWND GetForegroundWindowHandle()
+{
+		HWND Result;
+		EnumWindows(::EnumWindowsCallback, reinterpret_cast<LPARAM>(&Result));
+        return Result;
+}
 
 bool D3D11Hook::Initialize()
 {
@@ -16,7 +32,7 @@ bool D3D11Hook::Initialize()
     SwapChainDesc.BufferCount = 1;
     SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    SwapChainDesc.OutputWindow = Utils::GetCS2WindowHandle();
+    SwapChainDesc.OutputWindow = GetForegroundWindowHandle();
     SwapChainDesc.SampleDesc.Count = 1;
     SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
     SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
